@@ -3,7 +3,7 @@ package gosmpp
 import (
 	"context"
 	"errors"
-	"github.com/linxGnu/gosmpp/pdu"
+	"github.com/coljiang/gosmpp/pdu"
 	"sync"
 	"sync/atomic"
 	"time"

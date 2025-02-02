@@ -2,7 +2,7 @@ package pdu
 
 import (
 	"errors"
-	"github.com/linxGnu/gosmpp/data"
+	"github.com/coljiang/gosmpp/data"
 	"io"
 )
 

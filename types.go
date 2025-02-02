@@ -1,7 +1,7 @@
 package gosmpp
 
 import (
-	"github.com/linxGnu/gosmpp/pdu"
+	"github.com/coljiang/gosmpp/pdu"
 )
 
 // PDUCallback handles received PDU.

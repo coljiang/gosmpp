@@ -1,8 +1,8 @@
 package pdu
 
 import (
-	"github.com/linxGnu/gosmpp/data"
-	"github.com/linxGnu/gosmpp/errors"
+	"github.com/coljiang/gosmpp/data"
+	"github.com/coljiang/gosmpp/errors"
 )
 
 type pduGenerator func() PDU

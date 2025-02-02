@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/linxGnu/gosmpp/data"
-	"github.com/linxGnu/gosmpp/pdu"
+	"github.com/coljiang/gosmpp/data"
+	"github.com/coljiang/gosmpp/pdu"
 )
 
 var (

@@ -1,4 +1,4 @@
-module github.com/linxGnu/gosmpp
+module github.com/coljiang/gosmpp
 
 go 1.20
 

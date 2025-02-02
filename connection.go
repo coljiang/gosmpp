@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/linxGnu/gosmpp/pdu"
+	"github.com/coljiang/gosmpp/pdu"
 )
 
 // Connection wraps over net.Conn with buffered data reader.

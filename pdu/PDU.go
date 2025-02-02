@@ -3,8 +3,8 @@ package pdu
 import (
 	"io"
 
-	"github.com/linxGnu/gosmpp/data"
-	"github.com/linxGnu/gosmpp/errors"
+	"github.com/coljiang/gosmpp/data"
+	"github.com/coljiang/gosmpp/errors"
 )
 
 // PDU represents PDU interface.

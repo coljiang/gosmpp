@@ -1,6 +1,6 @@
 package pdu
 
-import "github.com/linxGnu/gosmpp/data"
+import "github.com/coljiang/gosmpp/data"
 
 // AddressRange smpp address range of src and dst.
 type AddressRange struct {

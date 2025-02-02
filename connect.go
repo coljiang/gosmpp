@@ -145,10 +145,90 @@ func TRXConnector(dialer Dialer, auth Auth, opts ...connectorOption) Connector {
 	return c
 }
 
+// SevConnector
+func SevConnector(dialer Dialer, auth Auth, opts ...connectorOption) Connector {
+	c := &connector{
+		dialer:      dialer,
+		auth:        auth,
+		bindingType: pdu.Transceiver,
+	}
+	for _, opt := range opts {
+		opt(c)
+	}
+	return c
+}
+
 type connectorOption func(c *connector)
 
 func WithAddressRange(addressRange pdu.AddressRange) connectorOption {
 	return func(c *connector) {
 		c.addressRange = addressRange
 	}
+}
+
+func NewSevConnector(conn net.Conn) *sevConnector {
+	return &sevConnector{conn: conn}
+}
+
+type sevConnector struct {
+	//dialer       Dialer
+	auth        Auth
+	bindingType pdu.BindingType
+	//addressRange pdu.AddressRange
+	userCheck func(string, string, string) bool
+	conn      net.Conn
+}
+
+func (sc *sevConnector) SetBindingType(pdu.BindingType) *sevConnector {
+	return sc
+}
+
+func (sc *sevConnector) SetUserCheck(userCheckFunc func(username, password, ip string) bool) *sevConnector {
+	if userCheckFunc == nil {
+		return sc
+	}
+	sc.userCheck = userCheckFunc
+	return sc
+}
+
+func (sc *sevConnector) GetBindType() pdu.BindingType {
+	return sc.bindingType
+}
+
+func (sc *sevConnector) Connect() (c *Connection, err error) {
+	c = NewConnection(sc.conn)
+	var (
+		p   pdu.PDU
+		req *pdu.BindRequest
+	)
+	remoteIp := sc.conn.RemoteAddr().String()
+	for {
+		if p, err = pdu.Parse(c); err != nil {
+			_ = sc.conn.Close()
+			return
+		}
+		if pd, ok := p.(*pdu.BindRequest); ok {
+			req = pd
+			break
+		}
+	}
+	// 检查用户名和密码
+	if !sc.userCheck(req.SystemID, req.Password, remoteIp) {
+		// 认证失败，返回 Bind Response 失败 PDU
+		resp := pdu.NewBindResp(*req)
+		resp.Header.CommandStatus = data.ESME_RBINDFAIL // 绑定失败状态码
+		_, _ = c.WritePDU(resp)                         // 发送响应 PDU
+		_ = sc.conn.Close()                             // 关闭连接
+		return nil, fmt.Errorf("authentication failed for SystemID: %s", req.SystemID)
+	}
+
+	// 认证成功，返回成功 PDU
+	resp := pdu.NewBindResp(*req)
+	resp.Header.CommandStatus = data.ESME_ROK // 认证成功
+	_, err = c.WritePDU(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }

@@ -145,19 +145,6 @@ func TRXConnector(dialer Dialer, auth Auth, opts ...connectorOption) Connector {
 	return c
 }
 
-// SevConnector
-func SevConnector(dialer Dialer, auth Auth, opts ...connectorOption) Connector {
-	c := &connector{
-		dialer:      dialer,
-		auth:        auth,
-		bindingType: pdu.Transceiver,
-	}
-	for _, opt := range opts {
-		opt(c)
-	}
-	return c
-}
-
 type connectorOption func(c *connector)
 
 func WithAddressRange(addressRange pdu.AddressRange) connectorOption {
@@ -166,14 +153,21 @@ func WithAddressRange(addressRange pdu.AddressRange) connectorOption {
 	}
 }
 
-func NewSevConnector(conn net.Conn) *sevConnector {
-	return &sevConnector{conn: conn}
+func NewSevConnector(conn net.Conn, conf SevConnectConf) *sevConnector {
+	return &sevConnector{conn: conn, SevConnectConf: conf}
 }
 
+type SevConnectConf struct {
+	Id   string
+	Name string
+	Ip   string
+	Port string
+}
 type sevConnector struct {
 	//dialer       Dialer
-	auth        Auth
-	bindingType pdu.BindingType
+	auth           Auth
+	SevConnectConf SevConnectConf
+	bindingType    pdu.BindingType
 	//addressRange pdu.AddressRange
 	userCheck func(string, string, string) bool
 	conn      net.Conn
@@ -225,10 +219,13 @@ func (sc *sevConnector) Connect() (c *Connection, err error) {
 	// 认证成功，返回成功 PDU
 	resp := pdu.NewBindResp(*req)
 	resp.Header.CommandStatus = data.ESME_ROK // 认证成功
+	resp.SystemID = fmt.Sprintf("%s%s", sc.SevConnectConf.Name, sc.SevConnectConf.Id)
 	_, err = c.WritePDU(resp)
 	if err != nil {
 		return nil, err
 	}
+	//sc.auth.SystemID = resp.SystemID
+	c.systemID = req.SystemID
 
 	return c, nil
 }

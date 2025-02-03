@@ -43,7 +43,7 @@ func TestTransmit(t *testing.T) {
 			_ = transmitter.Close()
 		}()
 
-		require.Equal(t, "MelroseLabsSMSC", transmitter.Transmitter().SystemID())
+		require.Equal(t, "test11", transmitter.Transmitter().SystemID())
 
 		err = transmitter.Transmitter().Submit(newSubmitSM(auth.SystemID))
 		require.Nil(t, err)

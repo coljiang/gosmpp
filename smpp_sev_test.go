@@ -2,7 +2,7 @@ package gosmpp
 
 import (
 	"fmt"
-	"github.com/linxGnu/gosmpp/pdu"
+	"github.com/coljiang/gosmpp/pdu"
 	"net"
 	"testing"
 	"time"
@@ -28,7 +28,13 @@ func TestSevSmpp(t *testing.T) {
 }
 
 func handleSmpp(conn net.Conn) {
-	sevConnect := NewSevConnector(conn)
+	secconf := SevConnectConf{
+		Ip:   "127.0.0.1",
+		Port: "2775",
+		Id:   "1",
+		Name: "test1",
+	}
+	sevConnect := NewSevConnector(conn, secconf)
 	sevConnect.SetUserCheck(func(username, password, ip string) bool {
 		return true
 	}).SetBindingType(pdu.Transmitter)

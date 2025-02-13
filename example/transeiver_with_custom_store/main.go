@@ -25,7 +25,7 @@ func sendingAndReceiveSMS(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	auth := gosmpp.Auth{
-		SMSC:       "localhost:2775",
+		SMSC:       "localhost:2999",
 		SystemID:   "169994",
 		Password:   "EDXPJU",
 		SystemType: "",
@@ -66,7 +66,8 @@ func sendingAndReceiveSMS(wg *sync.WaitGroup) {
 				OnClosePduRequest:     handleOnClosePduRequest(),
 				PduExpireTimeOut:      30 * time.Second,
 				ExpireCheckTimer:      10 * time.Second,
-				MaxWindowSize:         30,
+				MaxWindowSize:         50,
+				StoreAccessTimeOut:    500 * time.Second,
 				EnableAutoRespond:     false,
 			},
 		},

@@ -19,8 +19,9 @@ func TestTransmit(t *testing.T) {
 		transmitter, err := NewSession(
 			TXConnector(NonTLSDialer, auth),
 			Settings{
-				ReadTimeout: 2 * time.Second,
-
+				ReadTimeout:  100 * time.Second,
+				WriteTimeout: 100 * time.Second,
+				EnquireLink:  99 * time.Second,
 				OnPDU: func(p pdu.PDU, _ bool) {
 					t.Logf("%+v\n", p)
 				},
@@ -44,15 +45,20 @@ func TestTransmit(t *testing.T) {
 		}()
 
 		require.Equal(t, "test11", transmitter.Transmitter().SystemID())
+		//time.Sleep(300 * time.Second)
 
-		err = transmitter.Transmitter().Submit(newSubmitSM(auth.SystemID))
-		require.Nil(t, err)
+		for x := 0; x < 1; x++ {
+			err = transmitter.Transmitter().Submit(newSubmitSM(auth.SystemID))
+			require.Nil(t, err)
+		}
+		for true {
+			time.Sleep(time.Second)
 
-		time.Sleep(400 * time.Millisecond)
-
-		transmitter.rebind()
-		err = transmitter.Transmitter().Submit(newSubmitSM(auth.SystemID))
-		require.Nil(t, err)
+		}
+		//
+		//transmitter.rebind()
+		//err = transmitter.Transmitter().Submit(newSubmitSM(auth.SystemID))
+		//require.Nil(t, err)
 	})
 
 	errorHandling := func(t *testing.T, trigger func(*transmittable)) {

@@ -1,6 +1,7 @@
 package gosmpp
 
 import (
+	"context"
 	"fmt"
 	"net"
 
@@ -153,6 +154,7 @@ func WithAddressRange(addressRange pdu.AddressRange) connectorOption {
 	}
 }
 
+// Connection  创建一个服务端连接
 func NewSevConnector(conn net.Conn, conf SevConnectConf) *sevConnector {
 	return &sevConnector{conn: conn, SevConnectConf: conf}
 }
@@ -206,6 +208,7 @@ func (sc *sevConnector) Connect() (c *Connection, err error) {
 			break
 		}
 	}
+	GetLog().Infof(context.Background(), "connecnt req systemid: %s passwd : %s ip %s\n", req.SystemID, req.Password, remoteIp)
 	// 检查用户名和密码
 	if !sc.userCheck(req.SystemID, req.Password, remoteIp) {
 		// 认证失败，返回 Bind Response 失败 PDU

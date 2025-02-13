@@ -112,17 +112,17 @@ func (s *Session) bound() *transceivable {
 	return r
 }
 
-// Transmitter returns bound Transmitter.
+// Transmitter returns bound Transmitter.  只能发送短信，不接收短信
 func (s *Session) Transmitter() Transmitter {
 	return s.bound()
 }
 
-// Receiver returns bound Receiver.
+// Receiver returns bound Receiver. //只能接收短信，不能发送短信
 func (s *Session) Receiver() Receiver {
 	return s.bound()
 }
 
-// Transceiver returns bound Transceiver.
+// Transceiver returns bound Transceiver. 既能发送短信，也能接收短信
 func (s *Session) Transceiver() Transceiver {
 	return s.bound()
 }

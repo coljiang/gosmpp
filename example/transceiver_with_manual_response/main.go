@@ -35,8 +35,8 @@ func sendingAndReceiveSMS(wg *sync.WaitGroup) {
 		gosmpp.Settings{
 			EnquireLink: 5 * time.Second,
 
-			ReadTimeout: 10 * time.Second,
-
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
 			OnSubmitError: func(_ pdu.PDU, err error) {
 				log.Fatal("SubmitPDU error:", err)
 			},
@@ -61,7 +61,6 @@ func sendingAndReceiveSMS(wg *sync.WaitGroup) {
 	defer func() {
 		_ = trans.Close()
 	}()
-
 	// sending SMS(s)
 	for i := 0; i < 30; i++ {
 		if err = trans.Transceiver().Submit(newSubmitSM()); err != nil {

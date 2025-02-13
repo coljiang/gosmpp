@@ -104,8 +104,9 @@ func (t *transceivable) start() {
 		}()
 
 	}
-	t.out.start()
-	t.in.start()
+	t.out.start() //发送
+
+	t.in.start() //接收
 }
 
 // SystemID returns tagged SystemID which is attached with bind_resp from SMSC.

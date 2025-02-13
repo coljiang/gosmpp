@@ -15,7 +15,7 @@ var auths = [][2]string{
 }
 
 const (
-	smscAddr = "127.0.0.1:2775"
+	smscAddr = "172.17.1.214:2999"
 	mess     = "Thử nghiệm: chuẩn bị nế mễ"
 )
 

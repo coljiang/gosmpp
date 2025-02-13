@@ -25,7 +25,7 @@ func sendingAndReceiveSMS(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	auth := gosmpp.Auth{
-		SMSC:       "localhost:2775",
+		SMSC:       "127.0.0.1:2999",
 		SystemID:   "169994",
 		Password:   "EDXPJU",
 		SystemType: "",
@@ -64,11 +64,15 @@ func sendingAndReceiveSMS(wg *sync.WaitGroup) {
 	}()
 
 	// sending SMS(s)
-	for i := 0; i < 1800; i++ {
+	for i := 0; i < 18; i++ {
 		if err = trans.Transceiver().Submit(newSubmitSM()); err != nil {
 			fmt.Println(err)
 		}
+		fmt.Println("send sms >>>>>> ", i)
 		time.Sleep(time.Second)
+	}
+	for true {
+		time.Sleep(1 * time.Second)
 	}
 }
 

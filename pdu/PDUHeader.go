@@ -54,6 +54,10 @@ func (c *Header) Unmarshal(b *ByteBuffer) (err error) {
 
 var sequenceNumber int32
 
+func GeNextSequenceNumber() int32 {
+	return nextSequenceNumber(&sequenceNumber)
+}
+
 // AssignSequenceNumber assigns sequence number auto-incrementally.
 func (c *Header) AssignSequenceNumber() {
 	c.SetSequenceNumber(nextSequenceNumber(&sequenceNumber))

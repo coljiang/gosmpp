@@ -5,7 +5,15 @@ import (
 
 	"github.com/coljiang/gosmpp/data"
 	"github.com/coljiang/gosmpp/errors"
+	"io/ioutil"
 )
+
+var respList = map[data.CommandIDType]bool{
+	data.BIND_TRANSCEIVER_RESP: true,
+	data.BIND_RECEIVER_RESP:    true,
+	data.BIND_TRANSMITTER_RESP: true,
+	data.SUBMIT_SM_RESP:        true,
+}
 
 // PDU represents PDU interface.
 type PDU interface {
@@ -82,17 +90,32 @@ func (c *base) unmarshal(b *ByteBuffer, bodyReader func(*ByteBuffer) error) (err
 				err = errors.ErrInvalidPDU
 				return
 			}
-
-			// body < command_length, still have optional parameters ?
-			if got < cmdLength {
-				var optParam []byte
-				if optParam, err = b.ReadN(cmdLength - got); err == nil {
-					err = c.unmarshalOptionalParam(optParam)
-				}
-				if err != nil {
-					return
+			skipOptionalBody := respList[c.CommandID] && c.CommandStatus != data.ESME_ROK
+			if skipOptionalBody {
+				io.Copy(ioutil.Discard, b)
+			} else {
+				// have optional body?
+				if got < cmdLength {
+					// the rest is optional body
+					var optionalBody []byte
+					if optionalBody, err = b.ReadN(cmdLength - got); err == nil {
+						err = c.unmarshalOptionalParam(optionalBody)
+					}
+					if err != nil {
+						return
+					}
 				}
 			}
+			//// body < command_length, still have optional parameters ?
+			//if got < cmdLength {
+			//	var optParam []byte
+			//	if optParam, err = b.ReadN(cmdLength - got); err == nil {
+			//		err = c.unmarshalOptionalParam(optParam)
+			//	}
+			//	if err != nil {
+			//		return
+			//	}
+			//}
 
 			// validate again
 			if b.Len() != fullLen-cmdLength {

@@ -1,6 +1,7 @@
 package gosmpp
 
 import (
+	"fmt"
 	"github.com/coljiang/gosmpp/pdu"
 	"sync/atomic"
 	"testing"
@@ -15,7 +16,7 @@ var auths = [][2]string{
 }
 
 const (
-	smscAddr = "172.17.1.214:2999"
+	smscAddr = "127.0.0.1:2999"
 	mess     = "Thử nghiệm: chuẩn bị nế mễ"
 )
 
@@ -65,6 +66,7 @@ func TestBindingSMSC_Error(t *testing.T) {
 	auth := Auth{SMSC: smscAddr, SystemID: "invalid"}
 	checker := func(t *testing.T, c Connector) {
 		conn, err := c.Connect()
+		fmt.Printf("err %v\n", err)
 		require.ErrorContains(t, err, "Invalid System ID")
 		_ = conn.Close()
 	}

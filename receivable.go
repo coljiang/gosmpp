@@ -93,7 +93,7 @@ func (t *receivable) loop() {
 		}
 
 		var closeOnUnbind bool
-		GetLog().Infof(context.Background(), "receive PDU - %+v:", p)
+		GInfof(context.Background(), "receive PDU - %+v:", p)
 		if p != nil {
 			if t.settings.WindowedRequestTracking != nil && (t.settings.OnExpectedPduResponse != nil || t.settings.OnReceivedPduRequest != nil) {
 				closeOnUnbind = t.handleWindowPdu(p)
@@ -119,9 +119,9 @@ func (t *receivable) handleWindowPdu(p pdu.PDU) (closing bool) {
 			*pdu.DeliverSMResp,
 			*pdu.EnquireLinkResp,
 			*pdu.QuerySMResp,
-			*pdu.ReplaceSMResp,
-			*pdu.SubmitMultiResp,
-			*pdu.SubmitSMResp:
+			*pdu.ReplaceSMResp:
+			//*pdu.SubmitMultiResp,
+			//*pdu.SubmitSMResp:
 			if t.settings.OnExpectedPduResponse != nil {
 				ctx, cancelFunc := context.WithTimeout(context.Background(), t.settings.StoreAccessTimeOut*time.Millisecond)
 				defer cancelFunc()

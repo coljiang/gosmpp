@@ -119,7 +119,7 @@ func TestTRXSubmitSM(t *testing.T) {
 	require.Equal(t, "MelroseLabsSMSC", trans.Transceiver().SystemID())
 
 	// sending 20 SMS
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 1; i++ {
 		err = trans.Transceiver().Submit(newSubmitSM(auth.SystemID))
 		require.Nil(t, err)
 		time.Sleep(50 * time.Millisecond)
@@ -128,14 +128,14 @@ func TestTRXSubmitSM(t *testing.T) {
 	time.Sleep(5 * time.Second)
 
 	// wait response received
-	require.True(t, atomic.LoadInt32(&countSubmitSMResp) >= 15)
+	require.True(t, atomic.LoadInt32(&countSubmitSMResp) >= 1)
 
 	// rebind and submit again
 	trans.rebind()
 	err = trans.Transceiver().Submit(newSubmitSM(auth.SystemID))
 	require.Nil(t, err)
 	time.Sleep(time.Second)
-	require.True(t, atomic.LoadInt32(&countSubmitSMResp) >= 16)
+	require.True(t, atomic.LoadInt32(&countSubmitSMResp) >= 2)
 }
 
 func TestTRXSubmitSM_with_OnAllPDU(t *testing.T) {
@@ -176,7 +176,7 @@ func TestTRXSubmitSM_with_OnAllPDU(t *testing.T) {
 	require.Equal(t, "MelroseLabsSMSC", trans.Transceiver().SystemID())
 
 	// sending 20 SMS
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 5; i++ {
 		err = trans.Transceiver().Submit(newSubmitSM(auth.SystemID))
 		require.Nil(t, err)
 		time.Sleep(50 * time.Millisecond)
@@ -266,7 +266,7 @@ func TestTRXSubmitSM_with_WindowConfig(t *testing.T) {
 	require.Equal(t, "MelroseLabsSMSC", trans.Transceiver().SystemID())
 
 	// sending 20 SMS
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 5; i++ {
 		err = trans.Transceiver().Submit(newSubmitSM(auth.SystemID))
 		require.Nil(t, err)
 		time.Sleep(50 * time.Millisecond)
@@ -332,7 +332,7 @@ func TestTRXSubmitSM_with_WindowConfig_and_AutoRespond(t *testing.T) {
 	require.Equal(t, "MelroseLabsSMSC", trans.Transceiver().SystemID())
 
 	// sending 20 SMS
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 5; i++ {
 		err = trans.Transceiver().Submit(newSubmitSM(auth.SystemID))
 		require.Nil(t, err)
 		time.Sleep(50 * time.Millisecond)

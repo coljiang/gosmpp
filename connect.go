@@ -208,21 +208,28 @@ func (sc *sevConnector) Connect() (c *Connection, err error) {
 			break
 		}
 	}
-	GetLog().Infof(context.Background(), "connecnt req systemid: %s passwd : %s ip %s\n", req.SystemID, req.Password, remoteIp)
+	GInfof(context.Background(), "connecnt req systemid: %s passwd : %s ip %s\n", req.SystemID, req.Password, remoteIp)
 	// 检查用户名和密码
-	if !sc.userCheck(req.SystemID, req.Password, remoteIp) {
+	if sc.userCheck(req.SystemID, req.Password, remoteIp) == false {
 		// 认证失败，返回 Bind Response 失败 PDU
 		resp := pdu.NewBindResp(*req)
-		resp.Header.CommandStatus = data.ESME_RBINDFAIL // 绑定失败状态码
-		_, _ = c.WritePDU(resp)                         // 发送响应 PDU
-		_ = sc.conn.Close()                             // 关闭连接
+		resp.Header.CommandStatus = data.ESME_RINVSYSID // 绑定失败状态码
+		_, err = c.WritePDU(resp)                       // 发送响应 PDU
+		if err != nil {
+			panic(err)
+		}
+		// 确保数据完全写入
+
+		// 等待数据完全传输
+		//time.Sleep(10 * time.Second)
+		//c.Close() // 关闭连接
 		return nil, fmt.Errorf("authentication failed for SystemID: %s", req.SystemID)
 	}
 
 	// 认证成功，返回成功 PDU
 	resp := pdu.NewBindResp(*req)
 	resp.Header.CommandStatus = data.ESME_ROK // 认证成功
-	resp.SystemID = fmt.Sprintf("%s%s", sc.SevConnectConf.Name, sc.SevConnectConf.Id)
+	resp.SystemID = fmt.Sprintf("%s", sc.SevConnectConf.Name)
 	_, err = c.WritePDU(resp)
 	if err != nil {
 		return nil, err

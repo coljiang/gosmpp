@@ -1,6 +1,7 @@
 package gosmpp
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"github.com/coljiang/gosmpp/pdu"
@@ -158,14 +159,19 @@ func (s *Session) rebind() {
 		_ = s.close()
 
 		for atomic.LoadInt32(&s.state) == Alive {
+			GInfof(context.Background(), "Rebinding Connect ")
+
 			conn, err := s.c.Connect()
 			if err != nil {
+				GInfof(context.Background(), "Rebinding Connect is failed - %+v", err)
+
 				if s.settings.OnRebindingError != nil {
 					s.settings.OnRebindingError(err)
 				}
 				time.Sleep(s.rebindingInterval)
 			} else {
 				// bind to session
+				GInfof(context.Background(), "Rebinding Connect RemoteAddr -  %+v ", conn.RemoteAddr().String())
 				trans := newTransceivable(conn, s.settings, s.requestStore)
 				trans.start()
 				s.trx.Store(trans)

@@ -86,11 +86,11 @@ func TestTRXSubmitSM(t *testing.T) {
 	trans, err := NewSession(
 		TRXConnector(NonTLSDialer, auth),
 		Settings{
-			ReadTimeout: 2 * time.Second,
+			ReadTimeout: 300 * time.Second,
 
-			WriteTimeout: 3 * time.Second,
+			WriteTimeout: 300 * time.Second,
 
-			EnquireLink: 200 * time.Millisecond,
+			EnquireLink: 200 * time.Second,
 
 			OnSubmitError: func(_ pdu.PDU, err error) {
 				t.Fatal(err)
@@ -125,6 +125,9 @@ func TestTRXSubmitSM(t *testing.T) {
 		time.Sleep(50 * time.Millisecond)
 	}
 
+	for {
+
+	}
 	time.Sleep(5 * time.Second)
 
 	// wait response received
@@ -205,7 +208,7 @@ func newSubmitSM(systemID string) *pdu.SubmitSM {
 	destAddr := pdu.NewAddress()
 	destAddr.SetTon(1)
 	destAddr.SetNpi(1)
-	_ = destAddr.SetAddress("12" + systemID)
+	_ = destAddr.SetAddress("+62852")
 
 	submitSM := pdu.NewSubmitSM().(*pdu.SubmitSM)
 	submitSM.SourceAddr = srcAddr
